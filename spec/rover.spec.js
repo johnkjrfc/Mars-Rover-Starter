@@ -14,11 +14,24 @@ describe("Rover class", function() {
     expect(rover.position).toBe('position');
     expect(rover.mode).toBe('NORMAL');
     expect(rover.generatorWatts).toBe(110);
-  })
-  it("", function() {
-    expect()
-  })
-  it("", function() {
-    expect()
+  });
+});
+describe("Rover receivedMessage method", function() {
+  it("response returned by receiveMessage contains the name of the message", function() {
+    
+    let message = new Message('testMessage');
+    let rover = new Rover(0);   
+    let roverInput = rover.receiveMessage(message);
+    expect(roverInput.message).toBe('testMessage'); 
+  });
+  it("response returned by receiveMessage includes two results if two commands are sent in the message", function() {
+    
+    let message = new Message('testMessage', [    //create message with 2 class objects 
+      {commandType: 'Command1', value: 'Value1'},
+      {commandType: 'Command2', value: 'Value2'}
+    ]);
+    let rover = new Rover(0);                     //create new Rover, then pass message to recieveMessage
+    let roverInput = rover.receiveMessage(message);
+    expect(roverInput.results).toHaveLength(2);   //checks what receiveMessage returns, verifing 2 objects are returned
   })
 });
