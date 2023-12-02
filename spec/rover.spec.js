@@ -47,12 +47,12 @@ describe("Rover receivedMessage method", function() {
     let roverStatus = roverInput.results[0];             
       expect(roverStatus).toEqual({
         completed: true,
-        
-        roverStatus: 
-        {position: rover.position,
-        mode: rover.mode,
-        generatorWatts: rover.generatorWatts
+        roverStatus: {
+          generatorWatts: 110,
+          mode: 'NORMAL',
+          position: 0
         }
+        
       });
   });
   //Test11
@@ -61,28 +61,49 @@ describe("Rover receivedMessage method", function() {
       new Command('MODE_CHANGE', 'LOW_POWER')        //create new command with mode change command
     ]);
     let rover = new Rover(0);                      //create new rover
+    //console.log("before", rover.mode);
     let roverModeChange = rover.receiveMessage(message);   // pass rover the desired command
-    let modeChangeResult = roverModeChange.results[0];         //extract results recieveMessage
-    console.log(message.commands[0])
-    expect(modeChangeResult).toEqual({
+    //console.log("After", rover.mode);
+    let modeChangeResults = roverModeChange.results[0];         //extract results recieveMessage
+   // console.log(message.commands[0])
+    expect(modeChangeResults).toEqual({
       completed: true,
-     //another expect to make sure mode change did not change from 'low power' to 'low power'  
-
-    }
-    )
+    })
+      //expect that rovers mode is low power
+    expect(rover.mode).toEqual("LOW_POWER")
   });
+
   //Test12
   it("responds with a false completed value when attempting to move in LOW_POWER mode", function(){
     // create message and command  to move
     let message = new Message('Move', [
-      new Command('MOVE')
+      new Command('MOVE', 2)
     ]);
-    //create a rover who's mode is in low power
-    let rover = new Rover (0,'')
-    expect()
+    //create a rover who's mode is in low power, and send it the message/command, then declare var(s) for results
+    let rover = new Rover (0,'LOW_POWER');
+    let moveRover = rover.receiveMessage(message);
+    let moveRoverResults = moveRover.results[0];
+    //check that result is false AND rover position = 0
+    expect(moveRoverResults).toEqual({
+      completed: false,
+    })
+    expect(rover.position).toEqual(0)
   })
   //Test13
-  it("", function(){
-    expect()
+  //MOVE command will update the rover’s position with the position value in the command.
+  it("responds with the position for the move command", function(){
+    // create message and command  to move
+    let message = new Message('Move', [
+      new Command('MOVE', 2)
+    ]);
+    let rover = new Rover (0);
+    let moveRover = rover.receiveMessage(message);
+    let moveRoverResults = moveRover.results[0];
+    //check that result is false AND rover position = 0
+    expect(moveRoverResults).toEqual({
+      completed: true,
+    })
+    expect(rover.position).toEqual(2)
   })
+
 });
