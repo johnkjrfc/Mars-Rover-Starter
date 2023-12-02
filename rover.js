@@ -6,9 +6,9 @@ class Rover {
    }
    receiveMessage(message) {
       let results = []; //init empty results array to store object
-      let result //declare result, to make it available within if loops
+      
       message.commands.forEach((command) => {
-              
+         let result //declare result, to make it available within if loops     
          if(command.commandType === 'STATUS_CHECK') {
             result = {
                completed: true,
@@ -28,6 +28,7 @@ class Rover {
             };
 //Handles a MOVE commandType. Cannot move in low power. otherwise move rover 
          } else if(command.commandType === 'MOVE') {
+            //console.log('before command', this.position, this.mode)  //**debug line */
             //first, do not allow rover to move if in low power
             if(this.mode === 'LOW_POWER') {
                result = {
@@ -35,11 +36,12 @@ class Rover {
                };
                //Otherwise, move rover, and mark completed true
             }else {
-                  this.position += command.value;
+                  this.position = command.value;
                   result = {
                      completed: true,
                   };
             }
+            //console.log('after command', this.position, this.mode)  //**debug line */
          }
          results.push(result)       //push command into results array
       });
